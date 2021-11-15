@@ -1,5 +1,5 @@
 const express = require('express');
-const controller = require('./constroller');
+const controller = require('./controller');
 
 const router = express.Router();
 
@@ -15,9 +15,6 @@ router.get('/disk', controller.getDiskData)
 
 router.get('/battery', controller.getBatteryData)
 
-router.get('/usb', controller.getUsbData)
-
 router.get('/network', controller.getNetworkData)
-
 
 module.exports = router

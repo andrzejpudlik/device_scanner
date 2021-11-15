@@ -1,6 +1,5 @@
 const si = require('systeminformation');
 
-
 exports.getCpuData = async (req, res) => {
   const cpuData = await si.cpu()
   res.status(200).json(cpuData)
@@ -32,11 +31,6 @@ exports.getDiskData = async (req, res) => {
 exports.getBatteryData = async (req, res) => {
   const batteryData = await si.battery()
   res.status(200).send(batteryData)
-}
-
-exports.getUsbData = async (req, res) => {
-  const usbData = await si.usb()
-  res.status(200).send(usbData)
 }
 
 exports.getNetworkData = async (req, res) => {

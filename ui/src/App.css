@@ -88,4 +88,5 @@ background-color: #282c34;
   width: calc(100% - 10px);
   height: calc(100% - 10px);
   text-overflow: inherit;
+  list-style-type: none;
 }

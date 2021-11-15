@@ -1,33 +1,33 @@
 import { useState } from 'react';
-import { fullLoad } from 'systeminformation';
 import './App.css';
 
 function App() {
   const hardware = ['CPU', 'Graphic', 'OS', 'Network', 'Memory', 'Disk', 'Battery'];
-  const [fulfilled, setfulfilled] = useState(undefined);
+  const [fulfilled, setFulfilled] = useState(undefined);
   const [displayInfo, setDisplayInfo] = useState(undefined);
+  const [displayText, setDisplayText] = useState('Naciśnij przycisk po lewej stronie');
   const Disk = [];
   let NetworkInfo = [];
 
   const fetchData = async (arg) => {
-    setfulfilled(undefined);
+    setFulfilled(undefined);
+    setDisplayText('Wczytywanie');
     setDisplayInfo(arg);
     const res = await fetch(`http://127.0.0.1:4000/hardware/${arg.toLowerCase()}`)
       .then(response => response.json());
 
     if (arg === 'CPU') {
-      setfulfilled(res);
+      setFulfilled(res);
     }
 
     if (arg === 'Graphic') {
-      console.log(res);
       const { controllers } = res;
       const infoGPU = controllers[0];
-      setfulfilled(infoGPU);
+      setFulfilled(infoGPU);
     }
 
     if (arg === 'OS') {
-      setfulfilled(res);
+      setFulfilled(res);
     }
     
     if (arg === 'Network') {
@@ -37,12 +37,11 @@ function App() {
         const { ifaceName, ip4, ip4subnet } = res[i];
         NetworkInfo.push(ifaceName, ip4, ip4subnet);
       }
-
-      setfulfilled(NetworkInfo);
+      setFulfilled(NetworkInfo);
     }
 
     if (arg === 'Memory') {
-      setfulfilled(res);
+      setFulfilled(res);
     }
 
     if (arg === 'Disk') {
@@ -53,13 +52,12 @@ function App() {
          DiskTwo = res[1];
       }
       Disk.push(DiskOne, DiskTwo);
-      setfulfilled(Disk);
+      setFulfilled(Disk);
     }
 
     if (arg === 'Battery') {
-      setfulfilled(res);
+      setFulfilled(res);
     }
-
   }
 
   const renderHardwareList = () => {
@@ -81,11 +79,12 @@ function App() {
     if(displayInfo === 'CPU') {
       return (
         <>
-          <li>Producent: {fulfilled.manufacturer}</li>
-          <li>Numer procesora: {fulfilled.brand}</li>
-          <li>Ilość rdzeni: {fulfilled.physicalCores}</li>
-          <li>Bazowa częstotliwość procesora: {fulfilled.speed}</li>
-          <li>Socket: {fulfilled.socket}</li>
+          <li>{`Producent: ${fulfilled.manufacturer}`}</li>
+          <li>{`Nazwa procesora: ${fulfilled.brand}`}</li>
+          <li>{`Ilość rdzeni: ${fulfilled.physicalCores}`}</li>
+          <li>{`Ilość wątków: ${fulfilled.cores}`}</li>
+          <li>{`Bazowa częstotliwość procesora: ${fulfilled.speed} GHz`}</li>
+          <li>{`Socket: ${fulfilled.socket}`}</li>
         </>
       )
     }
@@ -93,11 +92,11 @@ function App() {
     if(displayInfo === 'Graphic') {
       return (
         <>
-          <li>Układ graficzny: {fulfilled.model}</li>
-          <li>Pamięć: {fulfilled.memoryTotal}</li>
-          <li>Pamięć użyta: {fulfilled.memoryUsed}</li>
-          <li>Pamięć wolna: {fulfilled.memoryFree}</li>
-          <li>Temperatura: {fulfilled.temperatureGpu}</li>
+          <li>{`Układ graficzny: ${fulfilled.model}`}</li>
+          <li>{`Pamięć: ${fulfilled.memoryTotal}`}</li>
+          <li>{`Pamięć użyta: ${fulfilled.memoryUsed}`}</li>
+          <li>{`Pamięć wolna: ${fulfilled.memoryFree}`}</li>
+          <li>{`Temperatura: ${fulfilled.temperatureGpu}`}</li>
         </>
       )
     }
@@ -105,22 +104,19 @@ function App() {
     if (displayInfo === 'OS') {
       return (
         <>
-          <li>Wersja systemu: {fulfilled.distro}</li>
-          <li>Architektura: {fulfilled.arch}</li>
-          <li>Jądro systemu: {fulfilled.kernel}</li>
-          <li>Nazwa urządzenia: {fulfilled.hostname}</li>
-          <li>Identyfikator produktu: {fulfilled.serial}</li>
+          <li>{`Wersja systemu: ${fulfilled.distro}`}</li>
+          <li>{`Architektura: ${fulfilled.arch}`}</li>
+          <li>{`Jądro systemu: ${fulfilled.kernel}`}</li>
+          <li>{`Nazwa urządzenia: ${fulfilled.hostname}`}</li>
+          <li>{`Identyfikator produktu: ${fulfilled.serial}`}</li>
         </>
       )
     }
 
     if (displayInfo === 'Network') {
-      console.log(fulfilled);
       return fulfilled.map((el, index) => {
         return (
-          <>
-            <li key={index}>{el}</li>
-          </>
+          <li key={index}>{el}</li>
         )
       })
 
@@ -129,9 +125,9 @@ function App() {
     if(displayInfo === 'Memory') {
       return (
         <>
-          <li>Pamięć całkowita: {fulfilled.total} MB</li>
-          <li>Pamięć użyta: {fulfilled.used} MB</li>
-          <li>Pamięć wolna: {fulfilled.free} MB</li>
+          <li>{`Pamięć całkowita: ${(fulfilled.total / 1073741824).toFixed(2)} GB`}</li>
+          <li>{`Pamięć użyta: ${(fulfilled.used / 1073741824).toFixed(2)} GB`}</li>
+          <li>{`Pamięć wolna: ${(fulfilled.free / 1073741824).toFixed(2)} GB`}</li>
         </>
       )
     }
@@ -139,19 +135,19 @@ function App() {
     if(displayInfo === 'Disk') {
       return (
         <>
-          <li>Nazwa: {fulfilled[0].name}</li>
-          <li>Rozmiar: {fulfilled[0].size} MB</li>
-          <li>Interfejs: {fulfilled[0].interfaceType}</li>
-          <li>Typ: {fulfilled[0].type}</li>
-          <li>Numer seryjny: {fulfilled[0].serialNum}</li>
+          <li>{`Nazwa: ${fulfilled[0].name}`}</li>
+          <li>{`Rozmiar: ${fulfilled[0].size} MB`}</li>
+          <li>{`Interfejs: ${fulfilled[0].interfaceType}`}</li>
+          <li>{`Typ: ${fulfilled[0].type}`}</li>
+          <li>{`Numer seryjny: ${fulfilled[0].serialNum}`}</li>
           {!fulfilled[1] ? null : (
             <ul className="hardware-info__content">
-            <li>Nazwa: {fulfilled[1].name}</li>
-            <li>Rozmiar: {fulfilled[1].size} MB</li>
-            <li>Interfejs: {fulfilled[1].interfaceType}</li>
-            <li>Typ: {fulfilled[1].type}</li>
-            <li>Numer seryjny: {fulfilled[1].serialNum}</li>
-          </ul>
+              <li>{`Nazwa: ${fulfilled[1].name}`}</li>
+              <li>{`Rozmiar: ${fulfilled[1].size} MB`}</li>
+              <li>{`Interfejs: ${fulfilled[1].interfaceType}`}</li>
+              <li>{`Typ: ${fulfilled[1].type}`}</li>
+              <li>{`Numer seryjny: ${fulfilled[1].serialNum}`}</li>
+            </ul>
           )}
         </>
       )
@@ -160,26 +156,24 @@ function App() {
     if(displayInfo === 'Battery') {
       return (
         <>
-          <li>Model: {fulfilled.model}</li>
-          <li>Pojemność: {fulfilled.designedCapacity} {fulfilled.capacityUnit}</li>
-          <li>Aktualna pojemność: {fulfilled.currentCapacity} {fulfilled.capacityUnit}</li>
-          <li>Procent naładowania: {fulfilled.percent}</li>
-          <li>Podłączona do ładowania: {fulfilled.isCharging ? 'Tak' : 'Nie'}</li>
+          <li>{`Model: ${fulfilled.model}`}</li>
+          <li>{`Pojemność: ${fulfilled.designedCapacity} ${fulfilled.capacityUnit}`}</li>
+          <li>{`Aktualna pojemność: ${fulfilled.currentCapacity} ${fulfilled.capacityUnit}`}</li>
+          <li>{`Procent naładowania: ${fulfilled.percent}`}</li>
+          <li>{`Podłączona do ładowania: ${fulfilled.isCharging ? 'Tak' : 'Nie'}`}</li>
         </>
       )
     }
-
   }
-
 
   return (
     <div className="App">
       <div className='hardware-sellection'>
         <ul className="hardware-sellection__list">
-        {renderHardwareList()}
+          {renderHardwareList()}
         </ul>
         <div className="hardware-info">
-          <ul className="hardware-info__content">{fulfilled ? renderHardwareInfo() : 'select something first'}</ul>
+          <ul className="hardware-info__content">{fulfilled ? renderHardwareInfo() : displayText}</ul>
         </div>
       </div>
     </div>
